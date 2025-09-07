@@ -1,0 +1,29 @@
+[package]
+name = "static_merkle_array"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
+sha2 = "0.10"
+bincode = "1.3"
+once_cell = "1.19"
+hex = "0.4.3"
+num-bigint = "0.4.6"
+num-traits = "0.2.19"
+
+
+# Arkworks (versions here follow arkworks-mimc 0.3.x; align to your project)
+ark-ff = "0.5"
+ark-bn254 = "0.5"
+ark-serialize = "0.5"
+ark-crypto-primitives = "0.5"
+
+# MiMC with BN254 params enabled
+arkworks-mimc = { version = "0.3", default-features = false, features = ["mimc-7-91-bn254"] }
+
+
+
+[dev-dependencies]
+rand = "0.8"

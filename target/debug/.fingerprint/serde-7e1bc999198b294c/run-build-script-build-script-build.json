@@ -1,0 +1,1 @@
+{"rustc":11338813622717900593,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[9689903380558560274,"build_script_build",false,14252541314390699705]],"local":[{"RerunIfChanged":{"output":"debug/build/serde-7e1bc999198b294c/output","paths":["build.rs"]}}],"rustflags":["-C","linker=/usr/bin/clang"],"config":0,"compile_kind":0}
