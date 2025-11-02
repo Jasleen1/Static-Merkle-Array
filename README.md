@@ -29,23 +29,23 @@ A lightweight, generic **static Merkle commitment over an array** with:
 ## Quick start
 
 ```rust
-use your_crate::{
+use static_markle_array::{
     StaticMerkleArray,
     verify_value_with_proof,
 };
 
 // 1) Pick or implement a Merkle hasher
 //    Here we’ll use the MiMC/BN254 hasher and ProductionRule type provided by the crate.
-use your_crate::mimc_bn254_hasher::{ProductionRule, MiMCBn254RuleHasher};
+use static_markle_array::mimc_bn254_hasher::{ProductionRule, MiMCBn254RuleHasher};
 
 type RuleMerkle = StaticMerkleArray<ProductionRule, MiMCBn254RuleHasher>;
 
 fn main() {
     let rules = vec![
-        ProductionRule { parent: (true, 1),  leftChild: (false, 2), rightChild: (true, 3) },
-        ProductionRule { parent: (false, 10), leftChild: (true, 11), rightChild: (false, 12) },
-        ProductionRule { parent: (true, 42), leftChild: (true, 5), rightChild: (false, 99) },
-        ProductionRule { parent: (false, 7), leftChild: (false, 8), rightChild: (true, 9) },
+        ProductionRule { parent: (true, 1),  left_child: (false, 2), right_child: (true, 3) },
+        ProductionRule { parent: (false, 10), left_child: (true, 11), right_child: (false, 12) },
+        ProductionRule { parent: (true, 42), left_child: (true, 5), right_child: (false, 99) },
+        ProductionRule { parent: (false, 7), left_child: (false, 8), right_child: (true, 9) },
     ];
 
     // 2) Build once
@@ -73,7 +73,6 @@ fn main() {
 }
 ```
 
-> Replace `your_crate` above with your actual crate name if you’re using this as a library; if you’re in the same workspace/binary, `use crate::…` is fine.
 
 ---
 
@@ -120,15 +119,15 @@ pub trait MerkleHasher {
 This crate includes a ready‑to‑use **field‑native** MiMC x⁷/91‑rounds over BN254 that treats all fields of `ProductionRule` as **field elements**, not bytes.
 
 ```rust
-use your_crate::{StaticMerkleArray, verify_value_with_proof};
-use your_crate::mimc_bn254_hasher::{ProductionRule, MiMCBn254RuleHasher};
+use static_markle_array::{StaticMerkleArray, verify_value_with_proof};
+use static_markle_array::mimc_bn254_hasher::{ProductionRule, MiMCBn254RuleHasher};
 
 type RuleMerkle = StaticMerkleArray<ProductionRule, MiMCBn254RuleHasher>;
 
 fn example_mimc_rules() {
     let rules = vec![
-        ProductionRule { parent: (true, 1),  leftChild: (false, 2), rightChild: (true, 3) },
-        ProductionRule { parent: (false, 10), leftChild: (true, 11), rightChild: (false, 12) },
+        ProductionRule { parent: (true, 1),  left_child: (false, 2), right_child: (true, 3) },
+        ProductionRule { parent: (false, 10), left_child: (true, 11), right_child: (false, 12) },
     ];
     let tree: RuleMerkle = StaticMerkleArray::new(rules.clone());
     let proof = tree.prove_index(1).unwrap();
@@ -149,7 +148,7 @@ Here’s how to use **your own data type** with a **different hash**. We’ll im
 ```rust
 use serde::{Serialize, Deserialize};
 use sha2::{Digest as _, Sha256};
-use your_crate::{MerkleHasher, StaticMerkleArray, verify_value_with_proof};
+use static_markle_array::{MerkleHasher, StaticMerkleArray, verify_value_with_proof};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 struct Person { id: u64, name: String }

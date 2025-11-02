@@ -65,6 +65,28 @@ impl<H: MerkleHasher> MerkleProof<H> {
         }
         acc == self.root
     }
+
+    pub fn save_to_file<P: AsRef<std::path::Path>>(&self, path: P) -> Result<(), MerkleError> {
+        let bytes = bincode::serialize(self)?;
+        std::fs::write(path, bytes)?;
+        Ok(())
+    }
+
+    pub fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self, MerkleError> {
+        let mut file = fs::File::open(path)?;
+        let mut bytes = Vec::new();
+        file.read_to_end(&mut bytes)?;
+        let me: Self = bincode::deserialize(&bytes)?;
+        Ok(me)
+    } 
+
+    pub fn get_merkle_root(&self) -> H::Digest {
+        self.root
+    }
+
+    pub fn get_leaf(&self) -> H::Digest {
+        self.leaf
+    }
 }
 
 /* -------------------------------------------------------------------------
@@ -369,6 +391,25 @@ mod tests {
         // Proof from loaded still verifies
         let proof = loaded.prove_index(13).unwrap();
         assert!(verify_value_with_proof(&arr[13], &proof));
+    }
+
+    #[test]
+    fn proof_persistence_roundtrip() {
+        let arr: Vec<u64> = (0..25).collect();
+        let sm = ShaSMA::new(arr.clone());
+        let root_before = sm.root();
+
+        let path = std::env::temp_dir().join("sma.bin");
+        
+
+        // Proof from loaded still verifies
+        let proof = sm.prove_index(13).unwrap();
+
+        proof.save_to_file(&path).unwrap();
+        let loaded_proof = MerkleProof::<Sha256Hasher>::load_from_file(&path).unwrap();
+        assert_eq!(loaded_proof.get_merkle_root(), root_before);
+        assert!(verify_value_with_proof(&arr[13], &proof));
+        assert!(verify_value_with_proof(&arr[13], &loaded_proof));
     }
 
     #[test]
